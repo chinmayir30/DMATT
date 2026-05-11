@@ -49,3 +49,4 @@ temp/
 # MinIO storage and binaries
 bin/
 minio-storage/
+backend/youtube_tokens.json

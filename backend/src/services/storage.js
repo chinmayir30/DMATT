@@ -18,6 +18,7 @@ const BUCKET_NAME = process.env.MINIO_BUCKET || 'dmat-images';
 
 /**
  * Initialize MinIO - create bucket if it doesn't exist
+ * (Non-blocking - MinIO is optional)
  */
 export async function initializeStorage() {
   try {
@@ -41,14 +42,15 @@ export async function initializeStorage() {
       };
 
       await minioClient.setBucketPolicy(BUCKET_NAME, JSON.stringify(policy));
-      console.log(`MinIO bucket ${BUCKET_NAME} created successfully`);
+      console.log(`✅ MinIO bucket ${BUCKET_NAME} created successfully`);
     } else {
-      console.log(`MinIO bucket ${BUCKET_NAME} already exists`);
+      console.log(`✅ MinIO bucket ${BUCKET_NAME} already exists`);
     }
   } catch (error) {
-    console.error('Error initializing MinIO:', error.message);
-    console.error('Make sure MinIO server is running on http://localhost:9000');
-    console.error('Run: ./setup-minio.sh');
+    // MinIO is optional - fail silently if not available
+    console.warn(`⚠️ MinIO not available (optional): ${error.message}`);
+    console.warn('ℹ️ To enable MinIO for file uploads, run: ./setup-minio.sh');
+    // Don't throw - let the app continue without MinIO
   }
 }
 

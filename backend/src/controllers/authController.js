@@ -3,7 +3,7 @@
  * Handles user authentication and JWT token generation
  */
 
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../config/database.js';
 
@@ -123,12 +123,32 @@ export const login = async (req, res) => {
 
   } catch (error) {
     console.error('Login error:', error);
+    const code = error.code;
+    const msg = String(error.message || '');
+    const isDbAuth =
+      code === '28P01' || msg.includes('password authentication failed');
+    const isDbConn =
+      code === 'ECONNREFUSED' ||
+      code === 'ENOTFOUND' ||
+      code === '3D000' ||
+      msg.includes('ECONNREFUSED') ||
+      (msg.includes('does not exist') && msg.toLowerCase().includes('database'));
+
+    let message = 'An error occurred during login';
+    if (isDbAuth) {
+      message =
+        'Database rejected the login (wrong DB password). In backend/.env set DB_PASSWORD to your PostgreSQL password for user DB_USER, then restart the server.';
+    } else if (isDbConn) {
+      message =
+        'Cannot reach PostgreSQL. Start the database service and ensure DB_HOST, DB_PORT, and DB_NAME in backend/.env are correct, then restart the server.';
+    }
+
     return res.status(500).json({
       status: 'error',
-      message: 'An error occurred during login',
+      message,
       error: {
-        code: 'INTERNAL_ERROR'
-      }
+        code: isDbAuth || isDbConn ? 'DATABASE_ERROR' : 'INTERNAL_ERROR',
+      },
     });
   }
 };

@@ -1,0 +1,206 @@
+.social-hub-page {
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.social-hub-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.social-hub-header p {
+  margin: 6px 0 0;
+  color: #667085;
+}
+
+.social-hub-form {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.social-hub-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.social-hub-field label {
+  font-weight: 600;
+  color: #1d2939;
+}
+
+.social-hub-field textarea,
+.social-hub-field input,
+.social-hub-field select {
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.social-hub-form button {
+  justify-self: start;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.social-hub-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.social-hub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.social-hub-form button.secondary {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+.social-hub-hint {
+  display: block;
+  font-size: 12px;
+  color: #667085;
+  margin-top: 4px;
+}
+
+.social-hub-scheduled {
+  margin-top: 22px;
+  border-top: 1px solid #eaecf0;
+  padding-top: 14px;
+}
+
+.social-hub-scheduled h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.social-hub-scheduled-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.social-hub-scheduled-list li {
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #f9fafb;
+}
+
+.social-hub-scheduled-status {
+  margin-left: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #667085;
+}
+
+.social-hub-scheduled-preview {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #344054;
+}
+
+.social-hub-scheduled .link-cancel {
+  margin-top: 8px;
+  background: none;
+  border: none;
+  color: #b42318;
+  cursor: pointer;
+  padding: 0;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.social-hub-result {
+  margin-top: 18px;
+  border-top: 1px solid #eaecf0;
+  padding-top: 14px;
+}
+
+.result-grid {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.result-card {
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.result-card.ok {
+  background: #ecfdf3;
+  border-color: #86efac;
+}
+
+.result-card.skipped {
+  background: #fff7ed;
+  border-color: #fdba74;
+}
+
+.result-card.failed {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.result-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #344054;
+}
+
+.result-message {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #475467;
+}
+
+.social-hub-error {
+  margin-top: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b42318;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.social-hub-platform-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-connect {
+  background: #0ea5e9;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-small {
+  background: #eef2ff;
+  color: #3730a3;
+  border: 1px solid #c7d2fe;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}

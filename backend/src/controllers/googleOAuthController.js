@@ -15,6 +15,8 @@ const oauth2Client = new google.auth.OAuth2(
 const SCOPES = [
   'https://www.googleapis.com/auth/webmasters.readonly', // Search Console
   'https://www.googleapis.com/auth/analytics.readonly',  // Analytics
+  'https://www.googleapis.com/auth/youtube.readonly',    // YouTube (Phase 5)
+  'https://www.googleapis.com/auth/youtube.upload',      // YouTube uploads (publish videos)
 ];
 
 /**
@@ -24,6 +26,23 @@ const SCOPES = [
  */
 export const initiateOAuth = async (req, res) => {
   try {
+    // Validate configuration early (avoid confusing Google "invalid_client" pages)
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    if (
+      !clientId ||
+      !clientSecret ||
+      clientId.includes('your-client-id-here') ||
+      clientSecret.includes('your-client-secret-here')
+    ) {
+      return res.status(503).json({
+        success: false,
+        message: 'Google integration not configured',
+        error:
+          'Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in backend/.env using credentials from Google Cloud Console.',
+      });
+    }
+
     // Generate OAuth URL
     const authUrl = oauth2Client.generateAuthUrl({
       access_type: 'offline', // Get refresh token
@@ -155,7 +174,7 @@ export const handleOAuthCallback = async (req, res) => {
         <div class="container">
           <div class="success-icon">✓</div>
           <h1>Google Account Connected!</h1>
-          <p>Your Google account has been successfully connected to DMAT. You can now access Google Search Console and Analytics data.</p>
+          <p>Your Google account has been successfully connected to DMAT. You can now access Search Console, Analytics, and YouTube features (including uploads if enabled on your account).</p>
           <button onclick="window.close()">Close Window</button>
         </div>
         <script>

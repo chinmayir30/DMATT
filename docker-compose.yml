@@ -1,19 +1,19 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
     image: postgres:15-alpine
     container_name: dmat-postgres
     environment:
-      POSTGRES_DB: dmat_db
-      POSTGRES_USER: dmat_user
-      POSTGRES_PASSWORD: dmat_password
+      POSTGRES_DB: dmat_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dmat_user -d dmat_db"]
+      test: ["CMD-SHELL", "pg_isready -U postgres  -d dmat_dev"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,19 +23,65 @@ services:
     container_name: dmat-minio
     environment:
       MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_ROOT_PASSWORD: minioadmin
     ports:
-      - "9000:9000"  # MinIO API
-      - "9001:9001"  # MinIO Console
+      - "9000:9000" # MinIO API
+      - "9001:9001" # MinIO Console
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+
+  backend:
+    build:
+      context: ./backend
+    container_name: dmat-backend
+    env_file:
+      - ./backend/.env
+    environment:
+      NODE_ENV: development
+      PORT: 5001
+      CORS_ORIGIN: http://localhost:5173
+      SESSION_SECRET: ${SESSION_SECRET:-dev-secret}
+
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: 1234
+      DB_NAME: dmat_dev
+
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_USE_SSL: "false"
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET: dmat-images
+
+      # Persist YouTube OAuth tokens across restarts
+      YOUTUBE_TOKEN_PATH: /data/youtube_tokens.json
+    ports:
+      - "5001:5001"
+    volumes:
+      - backend_data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: dmat-frontend
+    env_file:
+      - ./frontend/.env
+    environment:
+      VITE_API_BASE_URL: http://localhost:5001
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
   minio_data:
+  backend_data:

@@ -1,22 +1,26 @@
 // API service for backend communication
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
 
 // Helper function to get auth token from localStorage
 const getAuthToken = () => {
-  return localStorage.getItem('token');
+  return localStorage.getItem("token");
 };
 
 // Helper function to handle API responses
 const handleResponse = async (response) => {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({
-      message: `HTTP error! status: ${response.status}`
+      message: `HTTP error! status: ${response.status}`,
     }));
 
     // Backend sends errors in format: { success: false, error: { message: "...", code: "..." } }
     // Or sometimes just { message: "..." }
-    const errorMessage = errorData.error?.message || errorData.message || `HTTP error! status: ${response.status}`;
+    const errorMessage =
+      errorData.error?.message ||
+      errorData.message ||
+      `HTTP error! status: ${response.status}`;
     throw new Error(errorMessage);
   }
   return response.json();
@@ -26,12 +30,12 @@ const handleResponse = async (response) => {
 const fetchWithAuth = async (url, options = {}) => {
   const token = getAuthToken();
   const headers = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...options.headers,
   };
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const response = await fetch(`${API_BASE_URL}${url}`, {
@@ -53,7 +57,7 @@ export const getHealth = async () => {
     }
     return await response.json();
   } catch (error) {
-    console.error('Error fetching health status:', error);
+    console.error("Error fetching health status:", error);
     throw error;
   }
 };
@@ -69,7 +73,7 @@ export const getDbStatus = async () => {
     }
     return await response.json();
   } catch (error) {
-    console.error('Error fetching database status:', error);
+    console.error("Error fetching database status:", error);
     throw error;
   }
 };
@@ -86,9 +90,9 @@ export const getDbStatus = async () => {
  */
 export const login = async (email, password) => {
   const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
   });
@@ -97,8 +101,8 @@ export const login = async (email, password) => {
 
   // Store token in localStorage
   if (data.data && data.data.token) {
-    localStorage.setItem('token', data.data.token);
-    localStorage.setItem('user', JSON.stringify(data.data.user));
+    localStorage.setItem("token", data.data.token);
+    localStorage.setItem("user", JSON.stringify(data.data.user));
   }
 
   return data.data;
@@ -108,22 +112,22 @@ export const login = async (email, password) => {
  * Verify current token
  */
 export const verifyToken = async () => {
-  return await fetchWithAuth('/api/auth/verify');
+  return await fetchWithAuth("/api/auth/verify");
 };
 
 /**
  * Logout user
  */
 export const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 };
 
 /**
  * Get current user from localStorage
  */
 export const getCurrentUser = () => {
-  const userStr = localStorage.getItem('user');
+  const userStr = localStorage.getItem("user");
   return userStr ? JSON.parse(userStr) : null;
 };
 
@@ -137,7 +141,7 @@ export const getCurrentUser = () => {
  */
 export const getLandingPages = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const url = `/api/admin/landing-pages${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/admin/landing-pages${queryString ? `?${queryString}` : ""}`;
   return await fetchWithAuth(url);
 };
 
@@ -154,8 +158,8 @@ export const getLandingPage = async (id) => {
  * @param {Object} data - Landing page data
  */
 export const createLandingPage = async (data) => {
-  return await fetchWithAuth('/api/admin/landing-pages', {
-    method: 'POST',
+  return await fetchWithAuth("/api/admin/landing-pages", {
+    method: "POST",
     body: JSON.stringify(data),
   });
 };
@@ -167,7 +171,7 @@ export const createLandingPage = async (data) => {
  */
 export const updateLandingPage = async (id, data) => {
   return await fetchWithAuth(`/api/admin/landing-pages/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     body: JSON.stringify(data),
   });
 };
@@ -178,7 +182,7 @@ export const updateLandingPage = async (id, data) => {
  */
 export const publishLandingPage = async (id) => {
   return await fetchWithAuth(`/api/admin/landing-pages/${id}/publish`, {
-    method: 'POST',
+    method: "POST",
   });
 };
 
@@ -188,7 +192,7 @@ export const publishLandingPage = async (id) => {
  */
 export const deleteLandingPage = async (id) => {
   return await fetchWithAuth(`/api/admin/landing-pages/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 };
 
@@ -200,12 +204,15 @@ export const getPreview = async (id) => {
   const token = getAuthToken();
   // Add cache-busting timestamp to force fresh preview every time
   const cacheBuster = `?t=${Date.now()}`;
-  const response = await fetch(`${API_BASE_URL}/api/admin/landing-pages/${id}/preview${cacheBuster}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/landing-pages/${id}/preview${cacheBuster}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store", // Disable browser caching
     },
-    cache: 'no-store', // Disable browser caching
-  });
+  );
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -218,7 +225,7 @@ export const getPreview = async (id) => {
  * Get landing page stats
  */
 export const getLandingPageStats = async () => {
-  return await fetchWithAuth('/api/admin/landing-pages/stats');
+  return await fetchWithAuth("/api/admin/landing-pages/stats");
 };
 
 // ============================================================================
@@ -231,7 +238,7 @@ export const getLandingPageStats = async () => {
  */
 export const getLeads = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const url = `/api/admin/leads${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/admin/leads${queryString ? `?${queryString}` : ""}`;
   return await fetchWithAuth(url);
 };
 
@@ -250,7 +257,7 @@ export const getLead = async (id) => {
  */
 export const updateLeadStatus = async (id, status) => {
   return await fetchWithAuth(`/api/admin/leads/${id}`, {
-    method: 'PATCH',
+    method: "PATCH",
     body: JSON.stringify({ status }),
   });
 };
@@ -262,11 +269,11 @@ export const updateLeadStatus = async (id, status) => {
 export const exportLeads = async (params = {}) => {
   const token = getAuthToken();
   const queryString = new URLSearchParams(params).toString();
-  const url = `${API_BASE_URL}/api/admin/leads/export${queryString ? `?${queryString}` : ''}`;
+  const url = `${API_BASE_URL}/api/admin/leads/export${queryString ? `?${queryString}` : ""}`;
 
   const response = await fetch(url, {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -285,7 +292,7 @@ export const exportLeads = async (params = {}) => {
  */
 export const assignLead = async (id, assigned_to) => {
   return await fetchWithAuth(`/api/admin/leads/${id}/assign`, {
-    method: 'PATCH',
+    method: "PATCH",
     body: JSON.stringify({ assigned_to }),
   });
 };
@@ -305,7 +312,7 @@ export const getLeadNotes = async (id) => {
  */
 export const createLeadNote = async (id, note_text) => {
   return await fetchWithAuth(`/api/admin/leads/${id}/notes`, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify({ note_text }),
   });
 };
@@ -316,7 +323,7 @@ export const createLeadNote = async (id, note_text) => {
  */
 export const deleteLeadNote = async (noteId) => {
   return await fetchWithAuth(`/api/admin/leads/notes/${noteId}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 };
 
@@ -326,9 +333,9 @@ export const deleteLeadNote = async (noteId) => {
  */
 export const submitLead = async (data) => {
   const response = await fetch(`${API_BASE_URL}/api/public/leads`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   });
@@ -344,7 +351,7 @@ export const submitLead = async (data) => {
  * Get all users
  */
 export const getUsers = async () => {
-  return await fetchWithAuth('/api/admin/users');
+  return await fetchWithAuth("/api/admin/users");
 };
 
 /**
@@ -360,8 +367,8 @@ export const getUser = async (id) => {
  * @param {Object} data - User data (name, email, password, role)
  */
 export const createUser = async (data) => {
-  return await fetchWithAuth('/api/admin/users', {
-    method: 'POST',
+  return await fetchWithAuth("/api/admin/users", {
+    method: "POST",
     body: JSON.stringify(data),
   });
 };
@@ -373,7 +380,7 @@ export const createUser = async (data) => {
  */
 export const updateUser = async (id, data) => {
   return await fetchWithAuth(`/api/admin/users/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     body: JSON.stringify(data),
   });
 };
@@ -384,7 +391,7 @@ export const updateUser = async (id, data) => {
  */
 export const deleteUser = async (id) => {
   return await fetchWithAuth(`/api/admin/users/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 };
 
@@ -396,7 +403,7 @@ export const deleteUser = async (id) => {
  * Get dashboard analytics data
  */
 export const getDashboardAnalytics = async () => {
-  return await fetchWithAuth('/api/admin/analytics/dashboard');
+  return await fetchWithAuth("/api/admin/analytics/dashboard");
 };
 
 // ============================================================================
@@ -407,7 +414,7 @@ export const getDashboardAnalytics = async () => {
  * Get all active templates
  */
 export const getTemplates = async () => {
-  return await fetchWithAuth('/api/admin/templates');
+  return await fetchWithAuth("/api/admin/templates");
 };
 
 /**
@@ -430,12 +437,12 @@ export const getTemplate = async (id) => {
 export const uploadImage = async (imageFile) => {
   const token = getAuthToken();
   const formData = new FormData();
-  formData.append('image', imageFile);
+  formData.append("image", imageFile);
 
   const response = await fetch(`${API_BASE_URL}/api/admin/upload/image`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     body: formData, // Don't set Content-Type - browser will set it with boundary
   });
@@ -448,8 +455,8 @@ export const uploadImage = async (imageFile) => {
  * @param {string} imageUrl - URL of the image to delete
  */
 export const deleteImage = async (imageUrl) => {
-  return await fetchWithAuth('/api/admin/upload/image', {
-    method: 'DELETE',
+  return await fetchWithAuth("/api/admin/upload/image", {
+    method: "DELETE",
     body: JSON.stringify({ url: imageUrl }),
   });
 };
@@ -463,7 +470,17 @@ export const deleteImage = async (imageUrl) => {
  * @returns {Promise<Object>} - {authUrl}
  */
 export const getGoogleAuthUrl = async () => {
-  return await fetchWithAuth('/api/admin/google/oauth/authorize');
+  const token = getAuthToken();
+  return { authorizationUrl: `${API_BASE_URL}/api/social-oauth/google?token=${token}` };
+};
+
+/**
+ * Get YouTube-specific OAuth authorization URL (creates server session cookie)
+ * Uses credentials to ensure session cookie is set by backend.
+ */
+export const getYouTubeAuthUrl = async () => {
+  const token = getAuthToken();
+  return { authorizationUrl: `${API_BASE_URL}/api/social-oauth/google?token=${token}` };
 };
 
 /**
@@ -471,7 +488,7 @@ export const getGoogleAuthUrl = async () => {
  * @returns {Promise<Object>} - {connected, tokenExpiry, isExpired, scope}
  */
 export const getGoogleOAuthStatus = async () => {
-  return await fetchWithAuth('/api/admin/google/oauth/status');
+  return await fetchWithAuth("/api/admin/google/oauth/status");
 };
 
 /**
@@ -479,8 +496,8 @@ export const getGoogleOAuthStatus = async () => {
  * @returns {Promise<Object>}
  */
 export const disconnectGoogleAccount = async () => {
-  return await fetchWithAuth('/api/admin/google/oauth/disconnect', {
-    method: 'DELETE',
+  return await fetchWithAuth("/api/admin/google/oauth/disconnect", {
+    method: "DELETE",
   });
 };
 
@@ -493,7 +510,7 @@ export const disconnectGoogleAccount = async () => {
  * @returns {Promise<Object>}
  */
 export const getSearchConsoleSites = async () => {
-  return await fetchWithAuth('/api/admin/seo/search-console/sites');
+  return await fetchWithAuth("/api/admin/seo/search-console/sites");
 };
 
 /**
@@ -502,8 +519,8 @@ export const getSearchConsoleSites = async () => {
  * @returns {Promise<Object>}
  */
 export const syncKeywords = async (data) => {
-  return await fetchWithAuth('/api/admin/seo/search-console/sync', {
-    method: 'POST',
+  return await fetchWithAuth("/api/admin/seo/search-console/sync", {
+    method: "POST",
     body: JSON.stringify(data),
   });
 };
@@ -515,7 +532,7 @@ export const syncKeywords = async (data) => {
  */
 export const getKeywords = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const url = `/api/admin/seo/keywords${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/admin/seo/keywords${queryString ? `?${queryString}` : ""}`;
   return await fetchWithAuth(url);
 };
 
@@ -526,7 +543,7 @@ export const getKeywords = async (params = {}) => {
  */
 export const getTopKeywords = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const url = `/api/admin/seo/keywords/top${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/admin/seo/keywords/top${queryString ? `?${queryString}` : ""}`;
   return await fetchWithAuth(url);
 };
 
@@ -537,7 +554,7 @@ export const getTopKeywords = async (params = {}) => {
  */
 export const getDecliningKeywords = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const url = `/api/admin/seo/keywords/declining${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/admin/seo/keywords/declining${queryString ? `?${queryString}` : ""}`;
   return await fetchWithAuth(url);
 };
 
@@ -548,7 +565,9 @@ export const getDecliningKeywords = async (params = {}) => {
  * @returns {Promise<Object>}
  */
 export const getKeywordTrend = async (keyword, days = 30) => {
-  return await fetchWithAuth(`/api/admin/seo/keywords/${encodeURIComponent(keyword)}/trend?days=${days}`);
+  return await fetchWithAuth(
+    `/api/admin/seo/keywords/${encodeURIComponent(keyword)}/trend?days=${days}`,
+  );
 };
 
 /**
@@ -559,11 +578,11 @@ export const getKeywordTrend = async (keyword, days = 30) => {
 export const exportKeywords = async (params = {}) => {
   const token = getAuthToken();
   const queryString = new URLSearchParams(params).toString();
-  const url = `${API_BASE_URL}/api/admin/seo/keywords/export${queryString ? `?${queryString}` : ''}`;
+  const url = `${API_BASE_URL}/api/admin/seo/keywords/export${queryString ? `?${queryString}` : ""}`;
 
   const response = await fetch(url, {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -581,7 +600,7 @@ export const exportKeywords = async (params = {}) => {
  */
 export const getIndexingIssues = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const url = `/api/admin/seo/indexing-issues${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/admin/seo/indexing-issues${queryString ? `?${queryString}` : ""}`;
   return await fetchWithAuth(url);
 };
 
@@ -594,7 +613,7 @@ export const getIndexingIssues = async (params = {}) => {
  * @returns {Promise<Object>}
  */
 export const getGA4Properties = async () => {
-  return await fetchWithAuth('/api/admin/ga4/properties');
+  return await fetchWithAuth("/api/admin/ga4/properties");
 };
 
 /**
@@ -603,8 +622,8 @@ export const getGA4Properties = async () => {
  * @returns {Promise<Object>}
  */
 export const addGA4Property = async (propertyData) => {
-  return await fetchWithAuth('/api/admin/ga4/properties', {
-    method: 'POST',
+  return await fetchWithAuth("/api/admin/ga4/properties", {
+    method: "POST",
     body: JSON.stringify(propertyData),
   });
 };
@@ -615,8 +634,8 @@ export const addGA4Property = async (propertyData) => {
  * @returns {Promise<Object>}
  */
 export const syncGA4Analytics = async (data) => {
-  return await fetchWithAuth('/api/admin/ga4/sync', {
-    method: 'POST',
+  return await fetchWithAuth("/api/admin/ga4/sync", {
+    method: "POST",
     body: JSON.stringify(data),
   });
 };
@@ -628,7 +647,7 @@ export const syncGA4Analytics = async (data) => {
  */
 export const getGA4Metrics = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const url = `/api/admin/ga4/metrics${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/admin/ga4/metrics${queryString ? `?${queryString}` : ""}`;
   return await fetchWithAuth(url);
 };
 
@@ -639,7 +658,7 @@ export const getGA4Metrics = async (params = {}) => {
  */
 export const getGA4PageViews = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const url = `/api/admin/ga4/page-views${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/admin/ga4/page-views${queryString ? `?${queryString}` : ""}`;
   return await fetchWithAuth(url);
 };
 
@@ -650,7 +669,7 @@ export const getGA4PageViews = async (params = {}) => {
  */
 export const getGA4Events = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const url = `/api/admin/ga4/events${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/admin/ga4/events${queryString ? `?${queryString}` : ""}`;
   return await fetchWithAuth(url);
 };
 
@@ -661,7 +680,7 @@ export const getGA4Events = async (params = {}) => {
  */
 export const getGA4Dashboard = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const url = `/api/admin/ga4/dashboard${queryString ? `?${queryString}` : ''}`;
+  const url = `/api/admin/ga4/dashboard${queryString ? `?${queryString}` : ""}`;
   return await fetchWithAuth(url);
 };
 
@@ -688,7 +707,8 @@ export const getSeoDashboard = async (days = 30) => {
  * @returns {Promise<Object>} - {authorizationUrl}
  */
 export const getLinkedInAuthUrl = async () => {
-  return await fetchWithAuth('/api/admin/linkedin/oauth/authorize');
+  const token = getAuthToken();
+  return { authorizationUrl: `${API_BASE_URL}/api/social-oauth/linkedin?token=${token}` };
 };
 
 /**
@@ -696,7 +716,7 @@ export const getLinkedInAuthUrl = async () => {
  * @returns {Promise<Object>} - {connected, linkedinUserName, linkedinUserEmail, connectedAt}
  */
 export const getLinkedInStatus = async () => {
-  return await fetchWithAuth('/api/admin/linkedin/status');
+  return await fetchWithAuth("/api/admin/linkedin/status");
 };
 
 /**
@@ -704,21 +724,32 @@ export const getLinkedInStatus = async () => {
  * @returns {Promise<Object>}
  */
 export const disconnectLinkedIn = async () => {
-  return await fetchWithAuth('/api/admin/linkedin/disconnect', {
-    method: 'POST',
+  return await fetchWithAuth("/api/admin/linkedin/disconnect", {
+    method: "POST",
   });
 };
 
 /**
  * Publish post to LinkedIn
- * @param {Object} data - {content, imageUrl}
+ * @param {FormData} data - FormData with content, contentType, mediaUrl, media file
  * @returns {Promise<Object>}
  */
 export const publishLinkedInPost = async (data) => {
-  return await fetchWithAuth('/api/admin/linkedin/posts', {
-    method: 'POST',
-    body: JSON.stringify(data),
+  const token = getAuthToken();
+  const headers = {};
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  // Don't set Content-Type - let browser handle multipart/form-data
+  const response = await fetch(`${API_BASE_URL}/api/admin/linkedin/posts`, {
+    method: "POST",
+    headers,
+    body: data,
   });
+
+  return handleResponse(response);
 };
 
 /**
@@ -726,7 +757,7 @@ export const publishLinkedInPost = async (data) => {
  * @returns {Promise<Object>} - {posts}
  */
 export const getLinkedInPosts = async () => {
-  return await fetchWithAuth('/api/admin/linkedin/posts');
+  return await fetchWithAuth("/api/admin/linkedin/posts");
 };
 
 /**
@@ -734,5 +765,156 @@ export const getLinkedInPosts = async () => {
  * @returns {Promise<Object>} - {totalPosts, postsLast30Days}
  */
 export const getLinkedInStats = async () => {
-  return await fetchWithAuth('/api/admin/linkedin/stats');
+  return await fetchWithAuth("/api/admin/linkedin/stats");
+};
+// =======================
+// Facebook APIs
+// =======================
+
+export const getFacebookAuthUrl = async () => {
+  const token = getAuthToken();
+  return { authorizationUrl: `${API_BASE_URL}/api/social-oauth/facebook?token=${token}` };
+};
+export const getFacebookPages = async () => {
+  return await fetchWithAuth("/api/admin/facebook/pages");
+};
+
+/**
+ * Publish post to Facebook
+ * @param {FormData} data - FormData with message, contentType, mediaUrl, media file, pageId
+ * @returns {Promise<Object>}
+ */
+export const publishFacebookPost = async (data) => {
+  const token = getAuthToken();
+  const headers = {};
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  // Don't set Content-Type - let browser handle multipart/form-data
+  const response = await fetch(`${API_BASE_URL}/api/admin/facebook/posts`, {
+    method: "POST",
+    headers,
+    body: data,
+  });
+
+  return handleResponse(response);
+};
+//new
+export const getFacebookStatus = async () => {
+  return await fetchWithAuth("/api/admin/facebook/status");
+};
+
+export const getFacebookStats = async () => {
+  return await fetchWithAuth("/api/admin/facebook/stats");
+};
+//new
+export const getFacebookPosts = async () => {
+  return await fetchWithAuth("/api/admin/facebook/posts");
+};
+
+export const getFacebookDiagnostics = async () => {
+  return await fetchWithAuth("/api/admin/facebook/diagnostics");
+};
+
+// WhatsApp APIs removed
+
+// =======================
+// YouTube APIs
+// =======================
+
+export const getYouTubeStatus = async () => {
+  return await fetchWithAuth("/api/admin/youtube/status", { credentials: "include" });
+};
+
+export const getYouTubeStats = async () => {
+  return await fetchWithAuth("/api/admin/youtube/stats");
+};
+
+export const getYouTubeVideos = async () => {
+  return await fetchWithAuth("/api/admin/youtube/videos", { credentials: "include" });
+};
+
+export const disconnectYouTube = async () => {
+  return await fetchWithAuth("/api/admin/youtube/disconnect", {
+    method: "POST",
+    credentials: "include"
+  });
+};
+
+export const uploadYouTubeVideo = async ({
+  file,
+  title,
+  description,
+  privacyStatus = "unlisted",
+}) => {
+  const token = getAuthToken();
+  const formData = new FormData();
+  formData.append("video", file);
+  formData.append("title", title || "");
+  formData.append("description", description || "");
+  formData.append("privacyStatus", privacyStatus || "unlisted");
+
+  const response = await fetch(`${API_BASE_URL}/api/admin/youtube/upload`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    credentials: "include",
+    body: formData,
+  });
+
+  return handleResponse(response);
+};
+
+// Instagram APIs
+// =======================
+
+// Chatbot removed
+
+export const disconnectFacebook = async () => {
+  return await fetchWithAuth("/api/admin/facebook/disconnect", {
+    method: "POST",
+  });
+};
+
+export const syncFacebookPages = async () => {
+  return await fetchWithAuth("/api/admin/facebook/sync-pages", {
+    method: "POST",
+  });
+};
+
+export const postToAllSocialPlatforms = async (payload) => {
+  const token = getAuthToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/social-hub/post-all`,
+    {
+      method: "POST",
+      headers,
+      body: payload,
+    },
+  );
+  return handleResponse(response);
+};
+
+export const getScheduledPosts = async () => {
+  return await fetchWithAuth("/api/admin/scheduled-posts");
+};
+
+export const createScheduledPost = async (formData) => {
+  const token = getAuthToken();
+  const response = await fetch(`${API_BASE_URL}/api/admin/scheduled-posts`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+  });
+  return handleResponse(response);
+};
+
+export const cancelScheduledPost = async (id) => {
+  return await fetchWithAuth(`/api/admin/scheduled-posts/${id}`, {
+    method: "DELETE",
+  });
 };

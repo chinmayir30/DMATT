@@ -128,9 +128,28 @@ export async function storeTokens(userId, tokenData, profileData) {
  * @returns {Promise<Object|null>} Token data or null
  */
 export async function getTokens(userId) {
-  const query = 'SELECT * FROM linkedin_oauth_tokens WHERE user_id = $1';
+  const query = "SELECT access_token, refresh_token, created_at, provider_account_id as linkedin_user_id, provider_account_name as linkedin_user_name, provider_account_email as linkedin_user_email FROM social_accounts WHERE user_id = $1 AND provider = 'linkedin'";
   const result = await pool.query(query, [userId]);
   return result.rows[0] || null;
+}
+
+export async function updateStoredProfile(userId, profileData) {
+  const query = `
+    UPDATE social_accounts
+    SET
+      provider_account_id = COALESCE($2, provider_account_id),
+      provider_account_name = COALESCE($3, provider_account_name),
+      provider_account_email = COALESCE($4, provider_account_email),
+      updated_at = NOW()
+    WHERE user_id = $1 AND provider = 'linkedin'
+  `;
+
+  await pool.query(query, [
+    userId,
+    profileData.linkedinUserId || null,
+    profileData.linkedinUserName || null,
+    profileData.linkedinUserEmail || null,
+  ]);
 }
 
 /**
@@ -139,17 +158,12 @@ export async function getTokens(userId) {
  * @returns {Promise<void>}
  */
 export async function deleteTokens(userId) {
-  const query = 'DELETE FROM linkedin_oauth_tokens WHERE user_id = $1';
+  const query = "DELETE FROM social_accounts WHERE user_id = $1 AND provider = 'linkedin'";
   await pool.query(query, [userId]);
 }
 
-/**
- * Check if access token is expired
- * @param {Date} expiresAt - Token expiration date
- * @returns {boolean} True if expired
- */
 export function isTokenExpired(expiresAt) {
-  return new Date() >= new Date(expiresAt);
+  return false;
 }
 
 /**
@@ -210,6 +224,202 @@ export async function publishPost(accessToken, linkedinUserId, text, imageUrl = 
 }
 
 /**
+ * Publish a photo post to LinkedIn
+ * @param {string} accessToken - LinkedIn access token
+ * @param {string} linkedinUserId - LinkedIn user ID
+ * @param {string} text - Post text
+ * @param {string} mediaSource - File path or URL to image
+ * @returns {Promise<Object>} Published post data
+ */
+export async function publishPhoto(accessToken, linkedinUserId, text, mediaSource) {
+  try {
+    const fs = await import('fs');
+    const authorUrn = `urn:li:person:${linkedinUserId}`;
+
+    // Register upload for image
+    const uploadResponse = await axios.post(
+      `${LINKEDIN_API_BASE}/assets?action=registerUpload`,
+      {
+        registerUploadRequest: {
+          owner: authorUrn,
+          recipes: ['urn:li:digitalmediaRecipe:feedshare-image']
+        }
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'X-Restli-Protocol-Version': '2.0.0'
+        }
+      }
+    );
+
+    const uploadUrl = uploadResponse.data.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest']?.uploadUrl;
+    const assetUrn = uploadResponse.data.value.asset;
+
+    if (!uploadUrl) {
+      throw new Error('Failed to get upload URL from LinkedIn');
+    }
+
+    // Upload the image
+    let imageBuffer;
+    if (mediaSource.startsWith('http')) {
+      const response = await axios.get(mediaSource, { responseType: 'arraybuffer' });
+      imageBuffer = Buffer.from(response.data);
+    } else {
+      imageBuffer = fs.readFileSync(mediaSource);
+    }
+
+    await axios.put(uploadUrl, imageBuffer, {
+      headers: {
+        'Content-Type': 'image/jpeg'
+      }
+    });
+
+    // Create post with image
+    const postData = {
+      author: authorUrn,
+      lifecycleState: 'PUBLISHED',
+      specificContent: {
+        'com.linkedin.ugc.ShareContent': {
+          shareCommentary: {
+            text: text
+          },
+          shareMediaCategory: 'IMAGE',
+          media: [
+            {
+              status: 'READY',
+              media: assetUrn
+            }
+          ]
+        }
+      },
+      visibility: {
+        'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC'
+      }
+    };
+
+    const response = await axios.post(
+      `${LINKEDIN_API_BASE}/ugcPosts`,
+      postData,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'X-Restli-Protocol-Version': '2.0.0'
+        }
+      }
+    );
+
+    return {
+      id: response.data.id,
+      urn: response.headers['x-restli-id'] || response.data.id
+    };
+  } catch (error) {
+    console.error('Error publishing LinkedIn photo:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to publish photo to LinkedIn');
+  }
+}
+
+/**
+ * Publish a video post to LinkedIn
+ * @param {string} accessToken - LinkedIn access token
+ * @param {string} linkedinUserId - LinkedIn user ID
+ * @param {string} text - Post text
+ * @param {string} mediaSource - File path or URL to video
+ * @returns {Promise<Object>} Published post data
+ */
+export async function publishVideo(accessToken, linkedinUserId, text, mediaSource) {
+  try {
+    const fs = await import('fs');
+    const authorUrn = `urn:li:person:${linkedinUserId}`;
+
+    // Register upload for video
+    const uploadResponse = await axios.post(
+      `${LINKEDIN_API_BASE}/assets?action=registerUpload`,
+      {
+        registerUploadRequest: {
+          owner: authorUrn,
+          recipes: ['urn:li:digitalmediaRecipe:feedshare-video']
+        }
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'X-Restli-Protocol-Version': '2.0.0'
+        }
+      }
+    );
+
+    const uploadUrl = uploadResponse.data.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest']?.uploadUrl;
+    const assetUrn = uploadResponse.data.value.asset;
+
+    if (!uploadUrl) {
+      throw new Error('Failed to get upload URL from LinkedIn');
+    }
+
+    // Upload the video
+    let videoBuffer;
+    if (mediaSource.startsWith('http')) {
+      const response = await axios.get(mediaSource, { responseType: 'arraybuffer' });
+      videoBuffer = Buffer.from(response.data);
+    } else {
+      videoBuffer = fs.readFileSync(mediaSource);
+    }
+
+    await axios.put(uploadUrl, videoBuffer, {
+      headers: {
+        'Content-Type': 'video/mp4'
+      }
+    });
+
+    // Create post with video
+    const postData = {
+      author: authorUrn,
+      lifecycleState: 'PUBLISHED',
+      specificContent: {
+        'com.linkedin.ugc.ShareContent': {
+          shareCommentary: {
+            text: text
+          },
+          shareMediaCategory: 'VIDEO',
+          media: [
+            {
+              status: 'READY',
+              media: assetUrn
+            }
+          ]
+        }
+      },
+      visibility: {
+        'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC'
+      }
+    };
+
+    const response = await axios.post(
+      `${LINKEDIN_API_BASE}/ugcPosts`,
+      postData,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'X-Restli-Protocol-Version': '2.0.0'
+        }
+      }
+    );
+
+    return {
+      id: response.data.id,
+      urn: response.headers['x-restli-id'] || response.data.id
+    };
+  } catch (error) {
+    console.error('Error publishing LinkedIn video:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to publish video to LinkedIn');
+  }
+}
+
+/**
  * Save post to database
  * @param {number} userId - User ID
  * @param {string} linkedinPostId - LinkedIn post ID
@@ -217,9 +427,10 @@ export async function publishPost(accessToken, linkedinUserId, text, imageUrl = 
  * @param {string|null} postUrl - LinkedIn post URL
  * @param {string|null} imageUrl - Image URL
  * @param {string} linkedinUrn - LinkedIn URN
+ * @param {string} contentType - Content type (text, photo, video)
  * @returns {Promise<Object>} Saved post data
  */
-export async function savePost(userId, linkedinPostId, content, postUrl, imageUrl, linkedinUrn) {
+export async function savePost(userId, linkedinPostId, content, postUrl, imageUrl, linkedinUrn, contentType = 'text') {
   const query = `
     INSERT INTO linkedin_posts
     (user_id, linkedin_post_id, post_content, post_url, image_url, linkedin_urn, status, published_at)
@@ -267,4 +478,132 @@ export async function getPostCount(userId) {
   const query = 'SELECT COUNT(*) as count FROM linkedin_posts WHERE user_id = $1';
   const result = await pool.query(query, [userId]);
   return parseInt(result.rows[0].count);
+}
+
+export async function updatePostMetrics(postRowId, metrics) {
+  if (!postRowId) return;
+
+  await pool.query(
+    `UPDATE linkedin_posts
+     SET likes_count = $2,
+         comments_count = $3,
+         shares_count = $4,
+         metrics_last_synced_at = CASE WHEN $5::text IS NULL THEN NOW() ELSE metrics_last_synced_at END,
+         metrics_error = $5
+     WHERE id = $1`,
+    [
+      postRowId,
+      metrics.likesCount,
+      metrics.commentsCount,
+      metrics.sharesCount,
+      metrics.error || null,
+    ],
+  );
+}
+
+function getLinkedinVersion() {
+  return process.env.LINKEDIN_VERSION || '202604';
+}
+
+function encodeLinkedinUrnForPath(urn) {
+  return encodeURIComponent(urn);
+}
+
+/**
+ * Fetch reaction/comment summary for a UGC post.
+ * Note: LinkedIn does not provide "who liked" lists via this API; only counts.
+ */
+export async function getUgcSocialMetadata(accessToken, ugcPostUrn) {
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    'Linkedin-Version': getLinkedinVersion(),
+    'X-Restli-Protocol-Version': '2.0.0',
+  };
+  let resp;
+
+  try {
+    resp = await axios.get(
+      `https://api.linkedin.com/rest/socialMetadata/${encodeLinkedinUrnForPath(ugcPostUrn)}`,
+      { headers },
+    );
+  } catch (metadataError) {
+    // Some LinkedIn apps/accounts expose engagement via socialActions instead.
+    resp = await axios.get(
+      `https://api.linkedin.com/rest/socialActions/${encodeLinkedinUrnForPath(ugcPostUrn)}`,
+      { headers },
+    );
+  }
+
+  const reactionSummaries = resp.data?.reactionSummaries || {};
+  const commentSummary = resp.data?.commentSummary || {};
+  const raw = resp.data || {};
+  const likesSummary = raw.likesSummary || {};
+  const commentsSummary = raw.commentsSummary || {};
+  const sharesCount =
+    raw.shareSummary?.count ??
+    raw.reshares?.count ??
+    raw.shareStatistics?.shareCount ??
+    raw.totalShareCount ??
+    0;
+
+  return {
+    likesCount:
+      reactionSummaries?.LIKE?.count ??
+      likesSummary.totalLikes ??
+      likesSummary.aggregatedTotalLikes ??
+      raw.likesCount ??
+      null,
+    commentsCount:
+      commentSummary?.count ??
+      commentsSummary.totalFirstLevelComments ??
+      commentsSummary.aggregatedTotalComments ??
+      raw.commentsCount ??
+      null,
+    sharesCount,
+    raw: resp.data,
+  };
+}
+
+/**
+ * Fetch recent comments for a UGC post.
+ * "who commented" = actor URN (no name guarantee due to API restrictions).
+ */
+export async function getUgcPostComments(accessToken, ugcPostUrn, limit = 5) {
+  const url = `https://api.linkedin.com/rest/socialActions/${encodeLinkedinUrnForPath(ugcPostUrn)}/comments`;
+
+  const resp = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Linkedin-Version': getLinkedinVersion(),
+      'X-Restli-Protocol-Version': '2.0.0',
+    },
+  });
+
+  const elements = resp.data?.elements || [];
+
+  const extractPersonUrnsFromLikeUrn = (likeUrn) => {
+    // Example:
+    // urn:li:like:(urn:li:person:f49f...,urn:li:comment:(urn:li:activity:...,6636...))
+    if (typeof likeUrn !== 'string') return null;
+    const match = likeUrn.match(/urn:li:person:[^,)\s]+/);
+    return match ? match[0] : null;
+  };
+
+  return {
+    comments: elements.slice(0, limit).map((c) => ({
+      commentUrn: c.commentUrn || null,
+      actor: c.actor || null,
+      createdTime: c.created?.time ? new Date(c.created.time).toISOString() : null,
+      messageText: c.message?.text || '',
+      likesCount:
+        c.likesSummary?.totalLikes ??
+        c.likesSummary?.aggregatedTotalLikes ??
+        null,
+      likedBy:
+        (c.likesSummary?.selectedLikes || [])
+          .map((likeUrn) => extractPersonUrnsFromLikeUrn(likeUrn))
+          .filter(Boolean),
+    })),
+    raw: resp.data,
+  };
 }

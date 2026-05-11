@@ -1,0 +1,26 @@
+/* WhatsApp page uses the same shared styles as LinkedIn/Facebook pages. */
+.wa-meta-note-text {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.wa-meta-note code {
+  font-size: 0.85em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.wa-meta-note a {
+  color: #0077b5;
+  text-decoration: underline;
+}
+
+html[data-theme='dark'] .wa-meta-note code {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme='dark'] .wa-meta-note a {
+  color: #38bdf8;
+}

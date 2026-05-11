@@ -114,12 +114,25 @@ export const getConnectionStatus = async (req, res) => {
 
     // Check if token is expired
     const isExpired = linkedinService.isTokenExpired(tokens.expires_at);
+    let linkedinUserName = tokens.linkedin_user_name;
+    let linkedinUserEmail = tokens.linkedin_user_email;
+
+    if (!linkedinUserEmail) {
+      try {
+        const profileData = await linkedinService.getUserProfile(tokens.access_token);
+        await linkedinService.updateStoredProfile(req.user.id, profileData);
+        linkedinUserName = profileData.linkedinUserName || linkedinUserName;
+        linkedinUserEmail = profileData.linkedinUserEmail || linkedinUserEmail;
+      } catch (profileError) {
+        console.warn('Failed to refresh LinkedIn profile for status:', profileError.message);
+      }
+    }
 
     res.json({
       connected: true,
       expired: isExpired,
-      linkedinUserName: tokens.linkedin_user_name,
-      linkedinUserEmail: tokens.linkedin_user_email,
+      linkedinUserName,
+      linkedinUserEmail,
       connectedAt: tokens.created_at
     });
   } catch (error) {

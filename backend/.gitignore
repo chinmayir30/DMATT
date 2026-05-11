@@ -32,3 +32,6 @@ coverage/
 # Build
 dist/
 build/
+
+# Scheduled post uploads (local files)
+uploads/

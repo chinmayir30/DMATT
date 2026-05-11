@@ -33,12 +33,16 @@ export async function getAuthenticatedClient(userId) {
     process.env.GOOGLE_REDIRECT_URI
   );
 
-  // Set credentials
-  oauth2Client.setCredentials({
+  const credentials = {
     access_token: credential.access_token,
     refresh_token: credential.refresh_token,
-    expiry_date: new Date(credential.token_expiry).getTime(),
-  });
+  };
+
+  if (credential.token_expiry) {
+    credentials.expiry_date = new Date(credential.token_expiry).getTime();
+  }
+
+  oauth2Client.setCredentials(credentials);
 
   // Handle token refresh automatically
   oauth2Client.on('tokens', async (tokens) => {

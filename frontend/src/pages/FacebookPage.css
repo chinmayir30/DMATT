@@ -1,0 +1,201 @@
+/* Container */
+.linkedin-container {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Header */
+.linkedin-header h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #1a1a1a;
+}
+
+/* Card */
+.linkedin-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Textarea + Select */
+.linkedin-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.linkedin-textarea:focus {
+  border-color: #0a66c2;
+}
+
+/* Buttons */
+.linkedin-connect-button,
+.linkedin-publish-button {
+  background-color: #0a66c2;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  align-self: flex-start;
+}
+
+.linkedin-connect-button:hover,
+.linkedin-publish-button:hover {
+  background-color: #004182;
+}
+
+.linkedin-publish-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Message */
+.linkedin-message {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #0a66c2;
+}
+.post-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 120px;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1877f2;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+}
+.post-history-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.post-history-item-expanded {
+  border-color: #1877f2;
+}
+
+.post-date {
+  font-size: 0.85rem;
+  color: #777;
+  margin-bottom: 0.5rem;
+}
+
+.post-content {
+  font-size: 0.95rem;
+}
+
+/* Engagement (likes/comments) */
+.post-engagement {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.post-engagement-toggle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  color: #475569;
+  font-size: 0.92rem;
+}
+
+.engagement-pill {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  color: #334155;
+  font-weight: 600;
+  padding: 4px 10px;
+}
+
+.engagement-pill-clickable {
+  cursor: pointer;
+}
+
+.engagement-caret {
+  margin-left: auto;
+  color: #1877f2;
+  font-weight: 700;
+}
+
+.engagement-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.engagement-sub {
+  margin-top: 4px;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+.muted {
+  color: #666;
+}
+
+.comment-list {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comment-item {
+  background: #f8f9fa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.comment-meta {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.comment-message {
+  font-size: 0.92rem;
+  white-space: pre-wrap;
+}
+
+.comment-empty {
+  font-size: 0.9rem;
+}

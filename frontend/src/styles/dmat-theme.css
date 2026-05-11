@@ -1,0 +1,599 @@
+/* Design tokens: light (default) */
+:root {
+  --dmat-main-bg: #f7fafc;
+  --dmat-body-color: #213547;
+  --dmat-heading: #1a1a1a;
+  --dmat-muted: #666;
+  --dmat-card-bg: #ffffff;
+  --dmat-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --dmat-border: #e0e0e0;
+  --dmat-input-bg: #ffffff;
+  --dmat-input-border: #ddd;
+  --dmat-subtle-bg: #f8f9fa;
+  --dmat-link: #0077b5;
+  --dmat-status-badge-bg: #d4edda;
+  --dmat-status-badge-text: #155724;
+}
+
+html[data-theme='dark'] {
+  --dmat-main-bg: #0f172a;
+  --dmat-body-color: #e2e8f0;
+  --dmat-heading: #f1f5f9;
+  --dmat-muted: #94a3b8;
+  --dmat-card-bg: #1e293b;
+  --dmat-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  --dmat-border: #334155;
+  --dmat-input-bg: #0f172a;
+  --dmat-input-border: #475569;
+  --dmat-subtle-bg: #1e293b;
+  --dmat-link: #38bdf8;
+  --dmat-status-badge-bg: rgba(34, 197, 94, 0.2);
+  --dmat-status-badge-text: #86efac;
+}
+
+html[data-theme='dark'] body {
+  color: var(--dmat-body-color);
+  background-color: var(--dmat-main-bg);
+}
+
+/* --- Layout (admin shell) --- */
+html[data-theme='dark'] .layout .sidebar {
+  background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+  box-shadow: 2px 0 24px rgba(0, 0, 0, 0.4);
+}
+
+html[data-theme='dark'] .layout .sidebar-header {
+  border-bottom-color: rgba(148, 163, 184, 0.15);
+}
+
+html[data-theme='dark'] .layout .nav-item {
+  color: #cbd5e1;
+}
+
+html[data-theme='dark'] .layout .nav-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+}
+
+html[data-theme='dark'] .layout .nav-item.active {
+  background: rgba(99, 102, 241, 0.2);
+  border-left-color: #818cf8;
+}
+
+html[data-theme='dark'] .layout .sidebar-footer {
+  border-top-color: rgba(148, 163, 184, 0.15);
+}
+
+html[data-theme='dark'] .layout .theme-toggle {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+
+html[data-theme='dark'] .layout .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* --- LinkedIn-style pages (shared) --- */
+html[data-theme='dark'] .linkedin-page .page-header h1 {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .linkedin-page .page-header p {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .linkedin-page .alert-error {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+html[data-theme='dark'] .linkedin-page .alert-success {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.35);
+  color: #86efac;
+}
+
+html[data-theme='dark'] .linkedin-page .card {
+  background: var(--dmat-card-bg);
+  box-shadow: var(--dmat-card-shadow);
+}
+
+html[data-theme='dark'] .linkedin-page .card h2 {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .linkedin-page .connection-info p {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .linkedin-page .connection-info strong {
+  color: var(--dmat-link);
+}
+
+html[data-theme='dark'] .linkedin-page .status-badge {
+  background: var(--dmat-status-badge-bg);
+  color: var(--dmat-status-badge-text);
+}
+
+html[data-theme='dark'] .linkedin-page .form-group label {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .linkedin-page .form-control {
+  background: var(--dmat-input-bg);
+  border-color: var(--dmat-input-border);
+  color: var(--dmat-body-color);
+}
+
+html[data-theme='dark'] .linkedin-page .post-stats {
+  background: var(--dmat-subtle-bg);
+}
+
+html[data-theme='dark'] .linkedin-page .stat-label {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .linkedin-page .post-item {
+  border-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .linkedin-page .post-item:hover {
+  box-shadow: var(--dmat-card-shadow);
+}
+
+html[data-theme='dark'] .linkedin-page .post-header {
+  border-bottom-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .linkedin-page .post-date {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .linkedin-page .post-content {
+  color: var(--dmat-body-color);
+}
+
+html[data-theme='dark'] .linkedin-page .comment-item {
+  background: var(--dmat-subtle-bg);
+  border-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .linkedin-page .muted,
+html[data-theme='dark'] .linkedin-page .char-count,
+html[data-theme='dark'] .linkedin-page .form-hint {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .linkedin-page .empty-state {
+  color: var(--dmat-muted);
+}
+
+/* --- Social Hub --- */
+html[data-theme='dark'] .social-hub-page {
+  background: var(--dmat-card-bg);
+  box-shadow: var(--dmat-card-shadow);
+}
+
+html[data-theme='dark'] .social-hub-header p,
+html[data-theme='dark'] .social-hub-field label,
+html[data-theme='dark'] .social-hub-hint {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .social-hub-field textarea,
+html[data-theme='dark'] .social-hub-field input,
+html[data-theme='dark'] .social-hub-field select {
+  background: var(--dmat-input-bg);
+  border-color: var(--dmat-input-border);
+  color: var(--dmat-body-color);
+}
+
+html[data-theme='dark'] .social-hub-error {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+html[data-theme='dark'] .social-hub-scheduled-list li {
+  background: var(--dmat-subtle-bg);
+  border-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .result-card {
+  background: var(--dmat-subtle-bg);
+  border-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .result-card .result-message {
+  color: var(--dmat-body-color);
+}
+
+/* --- Login --- */
+html[data-theme='dark'] .login-theme-corner {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(15, 23, 42, 0.6);
+  color: #e2e8f0;
+}
+
+html[data-theme='dark'] .login-card {
+  background: var(--dmat-card-bg);
+}
+
+html[data-theme='dark'] .login-form h2 {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .login-form .form-group label {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .login-form .form-group input {
+  background: var(--dmat-input-bg);
+  border-color: var(--dmat-input-border);
+  color: var(--dmat-body-color);
+}
+
+html[data-theme='dark'] .login-form .form-group input:disabled {
+  background: var(--dmat-subtle-bg);
+}
+
+html[data-theme='dark'] .login-footer {
+  border-top-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .demo-credentials {
+  background: var(--dmat-subtle-bg);
+  color: var(--dmat-muted);
+  border-left-color: #818cf8;
+}
+
+html[data-theme='dark'] .demo-credentials strong {
+  color: var(--dmat-heading);
+}
+
+/* --- LinkedIn: help box (used on WhatsApp etc.) --- */
+html[data-theme='dark'] .linkedin-page .help-box {
+  background: rgba(14, 165, 233, 0.12);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #bae6fd;
+}
+
+/* --- Dashboard --- */
+html[data-theme='dark'] .dashboard-page {
+  background: var(--dmat-main-bg);
+}
+
+html[data-theme='dark'] .dashboard-header h1 {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .stat-card,
+html[data-theme='dark'] .chart-card {
+  background: var(--dmat-card-bg);
+  box-shadow: var(--dmat-card-shadow);
+  border: 1px solid var(--dmat-border);
+}
+
+html[data-theme='dark'] .stat-content h3,
+html[data-theme='dark'] .status-label,
+html[data-theme='dark'] .timeline-label,
+html[data-theme='dark'] .page-slug,
+html[data-theme='dark'] .lead-label {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .stat-value,
+html[data-theme='dark'] .chart-card h2,
+html[data-theme='dark'] .page-info h3,
+html[data-theme='dark'] .status-count,
+html[data-theme='dark'] .bar-value {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .top-page-item {
+  background: var(--dmat-subtle-bg);
+  border-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .top-page-item:hover {
+  border-color: #64748b;
+}
+
+html[data-theme='dark'] .page-rank {
+  background: var(--dmat-subtle-bg);
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .status-bar-container {
+  background: var(--dmat-subtle-bg);
+}
+
+html[data-theme='dark'] .timeline-bar-container {
+  background: var(--dmat-subtle-bg);
+}
+
+html[data-theme='dark'] .no-data {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .dashboard-error h2,
+html[data-theme='dark'] .dashboard-loading {
+  color: var(--dmat-muted);
+}
+
+/* --- User Management --- */
+html[data-theme='dark'] .users-page {
+  background: var(--dmat-main-bg);
+}
+
+html[data-theme='dark'] .users-header h1 {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .subtitle {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .users-stats .stat-item {
+  background: var(--dmat-card-bg);
+  border: 1px solid var(--dmat-border);
+  box-shadow: var(--dmat-card-shadow);
+}
+
+html[data-theme='dark'] .stat-label {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .stat-value {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .users-table-container {
+  background: var(--dmat-card-bg);
+  border: 1px solid var(--dmat-border);
+  box-shadow: var(--dmat-card-shadow);
+}
+
+html[data-theme='dark'] .users-table thead {
+  background: var(--dmat-subtle-bg);
+  border-bottom-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .users-table th {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .users-table tbody tr {
+  border-bottom-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .users-table tbody tr:hover {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+html[data-theme='dark'] .users-table td {
+  color: var(--dmat-body-color);
+}
+
+html[data-theme='dark'] .email-cell,
+html[data-theme='dark'] .date-cell {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .you-badge {
+  background: rgba(59, 130, 246, 0.25);
+  color: #93c5fd;
+}
+
+html[data-theme='dark'] .role-badge-admin {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+}
+
+html[data-theme='dark'] .role-badge-editor {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+html[data-theme='dark'] .role-badge-viewer {
+  background: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+}
+
+html[data-theme='dark'] .edit-button {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+}
+
+html[data-theme='dark'] .edit-button:hover {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+html[data-theme='dark'] .delete-button {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+}
+
+html[data-theme='dark'] .delete-button:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.22);
+}
+
+html[data-theme='dark'] .no-users {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .modal-content {
+  background: var(--dmat-card-bg);
+  border: 1px solid var(--dmat-border);
+}
+
+html[data-theme='dark'] .modal-header {
+  border-bottom-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .modal-header h2 {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .modal-close {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .modal-close:hover {
+  background: var(--dmat-subtle-bg);
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .modal-actions {
+  border-top-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .user-form .form-group label {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .user-form .form-group input,
+html[data-theme='dark'] .user-form .form-group select {
+  background: var(--dmat-input-bg);
+  border-color: var(--dmat-input-border);
+  color: var(--dmat-body-color);
+}
+
+html[data-theme='dark'] .user-form .form-group select {
+  background-color: var(--dmat-input-bg);
+}
+
+html[data-theme='dark'] .cancel-button {
+  background: var(--dmat-subtle-bg);
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .cancel-button:hover {
+  background: var(--dmat-border);
+}
+
+html[data-theme='dark'] .loading-spinner {
+  border-color: var(--dmat-border);
+  border-top-color: #818cf8;
+}
+
+html[data-theme='dark'] .error-state p {
+  color: var(--dmat-muted);
+}
+
+/* --- Leads --- */
+html[data-theme='dark'] .leads-main {
+  background: var(--dmat-main-bg);
+}
+
+html[data-theme='dark'] .leads-table-container {
+  background: var(--dmat-card-bg);
+  border-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .leads-table thead {
+  background: var(--dmat-subtle-bg);
+  border-bottom-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .leads-table th {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .leads-table tbody tr {
+  border-bottom-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .leads-table tbody tr:hover {
+  background: rgba(99, 102, 241, 0.06);
+}
+
+html[data-theme='dark'] .leads-table tbody tr.selected {
+  background: rgba(99, 102, 241, 0.12);
+}
+
+html[data-theme='dark'] .leads-table td {
+  color: var(--dmat-body-color);
+}
+
+html[data-theme='dark'] .export-button {
+  background: var(--dmat-card-bg);
+  color: #a5b4fc;
+  border-color: #6366f1;
+}
+
+html[data-theme='dark'] .export-button:hover {
+  background: rgba(99, 102, 241, 0.2);
+  color: #e0e7ff;
+}
+
+html[data-theme='dark'] .leads-main .page-header h1 {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .leads-main .page-header p {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .leads-main .page-toolbar .search-box input {
+  background: var(--dmat-input-bg);
+  border-color: var(--dmat-input-border);
+  color: var(--dmat-body-color);
+}
+
+/* --- Landing pages list & shared page-container --- */
+html[data-theme='dark'] .page-container .page-header h1 {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .page-container .page-header p {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .search-box input {
+  background: var(--dmat-input-bg);
+  border-color: var(--dmat-input-border);
+  color: var(--dmat-body-color);
+}
+
+html[data-theme='dark'] .filter-group select {
+  background: var(--dmat-input-bg);
+  border-color: var(--dmat-input-border);
+  color: var(--dmat-body-color);
+}
+
+html[data-theme='dark'] .pages-grid .page-card {
+  background: var(--dmat-card-bg);
+  border-color: var(--dmat-border);
+}
+
+html[data-theme='dark'] .page-card-header h3 {
+  color: var(--dmat-heading);
+}
+
+html[data-theme='dark'] .page-headline {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .page-meta .meta-label,
+html[data-theme='dark'] .page-meta .meta-value {
+  color: var(--dmat-muted);
+}
+
+html[data-theme='dark'] .filter-button {
+  background: var(--dmat-subtle-bg);
+  border-color: var(--dmat-border);
+  color: var(--dmat-body-color);
+}
+
+html[data-theme='dark'] .filter-button.active {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: #6366f1;
+  color: #e0e7ff;
+}
+
+html[data-theme='dark'] .empty-state {
+  color: var(--dmat-muted);
+}

@@ -170,15 +170,15 @@ CREATE TRIGGER trigger_leads_updated_at
 -- 5. SAMPLE SEED DATA (Optional - for development/testing)
 -- ============================================================================
 
--- Insert sample admin user (password: 'admin123' - bcrypt hashed)
--- Note: Replace with actual bcrypt hash in production
+-- Insert sample users (password: 'password123' - bcrypt hashed)
+-- Note: Replace with unique bcrypt hashes in production
 INSERT INTO users (name, email, password_hash, role)
 VALUES
-    ('Admin User', 'admin@innovateelectronics.com', '$2a$10$XQjZ9Y7Z1Z7Z1Z7Z1Z7Z1OeGz5Z1Z7Z1Z7Z1Z7Z1Z7Z1Z7Z1Z7Z1Z', 'admin'),
-    ('Deepa M', 'deepa@innovateelectronics.com', '$2a$10$XQjZ9Y7Z1Z7Z1Z7Z1Z7Z1OeGz5Z1Z7Z1Z7Z1Z7Z1Z7Z1Z7Z1Z7Z1Z', 'admin'),
-    ('Bhavya', 'bhavya@innovateelectronics.com', '$2a$10$XQjZ9Y7Z1Z7Z1Z7Z1Z7Z1OeGz5Z1Z7Z1Z7Z1Z7Z1Z7Z1Z7Z1Z7Z1Z', 'editor'),
-    ('Pavan', 'pavan@innovateelectronics.com', '$2a$10$XQjZ9Y7Z1Z7Z1Z7Z1Z7Z1OeGz5Z1Z7Z1Z7Z1Z7Z1Z7Z1Z7Z1Z7Z1Z', 'editor'),
-    ('Sharath', 'sharath@innovateelectronics.com', '$2a$10$XQjZ9Y7Z1Z7Z1Z7Z1Z7Z1OeGz5Z1Z7Z1Z7Z1Z7Z1Z7Z1Z7Z1Z7Z1Z', 'editor')
+    ('Admin User', 'admin@innovateelectronics.com', '$2b$10$wgrFdM02ub7FiKMcE27J1u/row/x12Qrd0Lp4dE3ehauMxE9xtueu', 'admin'),
+    ('Deepa M', 'deepa@innovateelectronics.com', '$2b$10$wgrFdM02ub7FiKMcE27J1u/row/x12Qrd0Lp4dE3ehauMxE9xtueu', 'admin'),
+    ('Bhavya', 'bhavya@innovateelectronics.com', '$2b$10$wgrFdM02ub7FiKMcE27J1u/row/x12Qrd0Lp4dE3ehauMxE9xtueu', 'editor'),
+    ('Pavan', 'pavan@innovateelectronics.com', '$2b$10$wgrFdM02ub7FiKMcE27J1u/row/x12Qrd0Lp4dE3ehauMxE9xtueu', 'editor'),
+    ('Sharath', 'sharath@innovateelectronics.com', '$2b$10$wgrFdM02ub7FiKMcE27J1u/row/x12Qrd0Lp4dE3ehauMxE9xtueu', 'editor')
 ON CONFLICT (email) DO NOTHING;
 
 -- Insert sample landing page

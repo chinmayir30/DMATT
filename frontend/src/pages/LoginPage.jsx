@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+// theme removed
 import { useAuth } from '../context/AuthContext';
+// theme removed
 import './LoginPage.css';
 
 function LoginPage() {
@@ -10,6 +12,7 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  // theme removed
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,11 +32,15 @@ function LoginPage() {
 
   return (
     <div className="login-page">
+      {/* theme toggle removed */}
       <div className="login-container">
         <div className="login-card">
-          <div className="login-header">
-            <h1>DMAT</h1>
-            <p>Digital Marketing Automation Tool</p>
+          <div className="login-header brand">
+            <img src="/innovate-logo.png" alt="Innovate Electronics" className="brand-logo" />
+            <div style={{ marginLeft: 12 }}>
+              <h1>Innovate Electronics</h1>
+              <p>Digital Marketing Automation Tool</p>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="login-form">

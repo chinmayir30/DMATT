@@ -1,0 +1,123 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                  DMAT - QUICK START GUIDE (Windows)                         ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+⚡ QUICKEST PATH TO RUNNING THE PROJECT:
+
+1. INSTALL DOCKER (One-time setup)
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │ Option A (Easiest):                                                     │
+   │  • Run: setup-docker-windows.ps1 (as Administrator)                     │
+   │  • Or download from: https://www.docker.com/products/docker-desktop     │
+   │  • Computer restart required                                            │
+   │                                                                         │
+   │ Option B (Manual):                                                      │
+   │  • Download Docker Desktop installer                                    │
+   │  • Install & restart computer                                           │
+   └─────────────────────────────────────────────────────────────────────────┘
+
+2. START DOCKER SERVICES
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │ Run: setup-docker-windows.bat                                           │
+   │ Wait 10-15 seconds for services to start                                │
+   └─────────────────────────────────────────────────────────────────────────┘
+
+3. START BACKEND (Terminal 1)
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │ cd backend                                                              │
+   │ npm start                                                               │
+   │ Output: Server running on http://localhost:5001                         │
+   └─────────────────────────────────────────────────────────────────────────┘
+
+4. START FRONTEND (Terminal 2)
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │ cd frontend                                                             │
+   │ npm run dev                                                             │
+   │ Output: Local: http://localhost:5173                                    │
+   └─────────────────────────────────────────────────────────────────────────┘
+
+5. OPEN IN BROWSER
+   Open: http://localhost:5173
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🔍 VERIFY EVERYTHING IS WORKING:
+
+  ✓ Docker: docker ps (should show 2 containers running)
+  ✓ Backend: curl http://localhost:5001
+  ✓ Frontend: http://localhost:5173
+  ✓ MinIO: http://localhost:9001 (minioadmin/minioadmin)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📍 SERVICE LOCATIONS:
+
+  Services Status
+  ┌────────────────────────────────────────┐
+  │ PostgreSQL   │ localhost:5433          │
+  │ MinIO API    │ localhost:9000          │
+  │ MinIO Admin  │ localhost:9001          │
+  │ Backend API  │ http://localhost:5001   │
+  │ Frontend UI  │ http://localhost:5173   │
+  └────────────────────────────────────────┘
+
+  Credentials
+  ┌────────────────────────────────────────┐
+  │ PostgreSQL  │ postgres / 1234          │
+  │ MinIO       │ minioadmin / minioadmin  │
+  └────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🆘 QUICK TROUBLESHOOTING:
+
+  Docker Command Not Found?
+  → Restart your computer (Docker needs time to install WSL2)
+  → Then run: docker --version
+
+  Cannot Connect to Database?
+  → Wait 10 seconds (PostgreSQL needs to initialize)
+  → Check: docker ps (should show dmat-postgres as Up)
+  → Verify port 5433 is not blocked by firewall
+
+  Port Already in Use Error?
+  → Run from PowerShell (as Admin):
+    netstat -ano | findstr :5433
+    taskkill /PID <PID> /F
+
+  Containers Not Starting?
+  → Check logs: docker logs dmat-postgres
+  → Restart: docker-compose restart
+  → Full reset: docker-compose down -v && docker-compose up -d
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📚 IMPORTANT FILES:
+
+  setup-docker-windows.ps1      → Automated Docker installation
+  setup-docker-windows.bat      → Start Docker services
+  run-project.bat               → Check dependencies & start services
+  DOCKER_SETUP_GUIDE.md         → Detailed setup instructions
+  SETUP_COMPLETE.md             → Complete setup summary
+  backend/.env                  → Backend configuration
+  docker-compose.yml            → Docker services configuration
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⏱️  ESTIMATED TIME:
+
+  • Docker Installation: 5-10 minutes (includes WSL2)
+  • Starting Services: 30 seconds
+  • Project Ready: ~1 minute
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✨ You're all set! Dependencies are ready, just need Docker running.
+
+═══════════════════════════════════════════════════════════════════════════════

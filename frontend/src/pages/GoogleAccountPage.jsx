@@ -34,21 +34,35 @@ function GoogleAccountPage() {
       setConnecting(true);
       setError(null);
 
-      // Get OAuth URL
-      const response = await getGoogleAuthUrl();
-      const authUrl = response.data.authUrl;
-
       // Open OAuth flow in popup window
       const width = 600;
       const height = 700;
       const left = window.screen.width / 2 - width / 2;
       const top = window.screen.height / 2 - height / 2;
 
+      // Open a blank popup immediately (avoids popup blockers)
       const popup = window.open(
-        authUrl,
+        'about:blank',
         'Google OAuth',
         `width=${width},height=${height},left=${left},top=${top},toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no`
       );
+
+      if (!popup) {
+        throw new Error('Popup blocked. Please allow popups for this site and try again.');
+      }
+
+      popup.document.title = 'Connecting...';
+      popup.document.body.innerHTML = `
+        <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; padding:24px;">
+          <h2 style="margin:0 0 8px 0;">Connecting to Google…</h2>
+          <p style="margin:0; color:#555;">This window will redirect to Google sign-in shortly.</p>
+        </div>
+      `;
+
+      // Get OAuth URL and redirect the popup
+      const response = await getGoogleAuthUrl();
+      const authUrl = response.data.authUrl;
+      popup.location.href = authUrl;
 
       // Poll to check if popup is closed
       const pollTimer = setInterval(async () => {
@@ -61,7 +75,24 @@ function GoogleAccountPage() {
       }, 500);
     } catch (err) {
       console.error('Failed to initiate Google OAuth:', err);
-      setError(err.message);
+      const msg = err.message || 'Failed to initiate Google OAuth';
+      setError(msg);
+      try {
+        const popup = window.open('', 'Google OAuth');
+        if (popup && !popup.closed) {
+          popup.document.title = 'Connection failed';
+          popup.document.body.innerHTML = `
+            <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; padding:24px;">
+              <h2 style="margin:0 0 8px 0; color:#b00020;">Connection failed</h2>
+              <p style="margin:0; color:#555;">${msg.replaceAll('<','&lt;').replaceAll('>','&gt;')}</p>
+              <p style="margin-top:16px; color:#777; font-size:12px;">This window will close automatically.</p>
+            </div>
+          `;
+          setTimeout(() => {
+            try { popup.close(); } catch {}
+          }, 2500);
+        }
+      } catch {}
       setConnecting(false);
     }
   };
