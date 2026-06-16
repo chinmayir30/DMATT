@@ -12,10 +12,13 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  ssl: {
+    rejectUnauthorized: false
+  }
 };
 
 const databaseName = process.env.DB_NAME || 'dmat_dev';
@@ -110,7 +113,6 @@ async function runMigrations() {
 
 async function main() {
   try {
-    await createDatabaseIfNotExists();
     await runMigrations();
   } catch (err) {
     console.error('Script failed:', err.message);
