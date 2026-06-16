@@ -35,7 +35,8 @@ const PORT = process.env.PORT || 5001;
 
 // ✅ CORS with credentials
 const allowedOrigins = (
-  process.env.CORS_ORIGIN || "dmatt.vercel.app"
+  process.env.CORS_ORIGIN ||
+  "https://dmatt.vercel.app,http://localhost:5173"
 ).split(",");
 
 app.use(
