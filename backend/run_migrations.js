@@ -30,7 +30,8 @@ const MIGRATIONS_SOURCES = [
     files: [
       '001_create_core_tables.sql',
       '002_extend_landing_pages.sql',
-      '003_refine_leads.sql'
+      '003_refine_leads.sql',
+      '002_phase2_enhancements.sql'
     ]
   },
   {

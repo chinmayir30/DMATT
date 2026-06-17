@@ -37,7 +37,7 @@ const poolConfig = {
   password: process.env.DB_PASSWORD || '',
 
   ssl:
-    process.env.NODE_ENV === 'production'
+    process.env.NODE_ENV === 'production' || host.includes('neon.tech')
       ? { rejectUnauthorized: false }
       : false,
 };
