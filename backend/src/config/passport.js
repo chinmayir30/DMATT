@@ -39,7 +39,7 @@ if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
   passport.use(new FacebookStrategy({
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      callbackURL: process.env.FACEBOOK_REDIRECT_URI || 'http://localhost:5001/api/social-oauth/facebook/callback',
+      callbackURL: process.env.FACEBOOK_REDIRECT_URI || 'https://dmat-backend-tjl8.onrender.com/api/social-oauth/facebook/callback',
       passReqToCallback: true,
       profileFields: ['id', 'displayName', 'emails']
     },
@@ -85,7 +85,7 @@ if ((process.env.YOUTUBE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID) && (process.
   passport.use(new GoogleStrategy({
       clientID: process.env.YOUTUBE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.YOUTUBE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.YOUTUBE_REDIRECT_URI || process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5001/api/social-oauth/google/callback',
+      callbackURL: process.env.YOUTUBE_REDIRECT_URI || process.env.GOOGLE_REDIRECT_URI || 'https://dmat-backend-tjl8.onrender.com/api/social-oauth/google/callback',
       passReqToCallback: true,
       // We'll pass the specific YouTube scopes in the route, but setup Strategy here
     },
@@ -110,7 +110,7 @@ if (process.env.LINKEDIN_CLIENT_ID && process.env.LINKEDIN_CLIENT_SECRET) {
   const linkedinStrategy = new LinkedInStrategy({
       clientID: process.env.LINKEDIN_CLIENT_ID,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-      callbackURL: process.env.LINKEDIN_REDIRECT_URI || 'http://localhost:5001/api/admin/linkedin/oauth/callback',
+      callbackURL: process.env.LINKEDIN_REDIRECT_URI || 'https://dmat-backend-tjl8.onrender.com/api/admin/linkedin/oauth/callback',
       scope: ['w_member_social', 'openid', 'profile', 'email'],
       state: true,
       passReqToCallback: true
